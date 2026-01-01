@@ -105,7 +105,7 @@ my $DEBUGLEVEL=0;
 my $HOME="/home/pohwer";
 my $hdHomeConfigCmd = "/home/prohwer/bin.local/libhdhomerun/hdhomerun_config";
 my $scanfilename = '/home/prohwer/Documents/perl/hdHomeScanToChannelProgram/scanOutput.txt';
-getopts( "hsD:f:", \%cmdLineOption );
+getopts( "hslD:f:", \%cmdLineOption );
     #	<+INPUTOPTIONS+>
 
  # examples of direct associating
@@ -150,6 +150,7 @@ if ( defined $cmdLineOption{s} )  {
     exit(0);
     
 }
+
 # ------------------------------------------------------------------------------
 #  MAIN part of program
 # ------------------------------------------------------------------------------
@@ -163,6 +164,17 @@ print Data::Dumper->Dump( [  \$hdHomeConfig ], [qw(hdHomeConfig   )] ) if ( $DEB
 
 my $channelProgram = getFreqChannelList();
 print Data::Dumper->Dump( [  \$channelProgram ], [qw(channelProgram   )] ) if ( $DEBUGLEVEL > 2);
+if ( defined $cmdLineOption{l} )  {
+    #print Data::Dumper->Dump( [  \$channelProgram ], [qw(channelProgram   )] );
+
+    my @key = sort ( { $a <=> $b } keys %$channelProgram) ;
+
+    print "VirtualTV\tName\n";
+    foreach my $virtual  ( @key ) {
+        print  "$virtual\t->\t$channelProgram->{$virtual}{Name} \n";
+    }
+    exit 0;
+}
 
 
 if ( defined $cmdLineOption{f} )  {
