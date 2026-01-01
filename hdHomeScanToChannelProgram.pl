@@ -165,15 +165,17 @@ my $channelProgram = getFreqChannelList();
 print Data::Dumper->Dump( [  \$channelProgram ], [qw(channelProgram   )] ) if ( $DEBUGLEVEL > 2);
 
 
-print "Searching for $findTVChannel\n" if ( $DEBUGLEVEL > 2);
-if ( defined $findTVChannel && defined $channelProgram->{ $findTVChannel} ) {
-    print $channelProgram->{ $findTVChannel }{Ch} . "  " . $channelProgram->{ $findTVChannel}{Prog} . "\n";
+if ( defined $cmdLineOption{f} )  {
+    print "Searching for $findTVChannel\n" if ( $DEBUGLEVEL > 2);
+    if ( defined $findTVChannel && defined $channelProgram->{ $findTVChannel} ) {
+        print $channelProgram->{ $findTVChannel }{Ch} . "  " . $channelProgram->{ $findTVChannel}{Prog} . "\n";
 
-    my $script = '/home/prohwer/Documents/perl/hdHomeScanToChannelProgram/hdHomeRun.sh';
+        my $script = '/home/prohwer/Documents/perl/hdHomeScanToChannelProgram/hdHomeRun.sh';
 
-    my $runStr = "$script $channelProgram->{ $findTVChannel }{Ch} $channelProgram->{ $findTVChannel}{Prog} ";
-    print $runStr . "\n";
-    system( $runStr );
+        my $runStr = "$script $channelProgram->{ $findTVChannel }{Ch} $channelProgram->{ $findTVChannel}{Prog} ";
+        print $runStr . "\n";
+        system( $runStr );
+    }
 }
 exit 0;
 
@@ -242,7 +244,7 @@ sub passing_argu_4ormore() {
 
 sub returnScalar {
     my $a = 0;
-    return \$a;
+    return $a;
 }
 
 sub returnArray {
@@ -256,11 +258,35 @@ sub returnHash {
     return \%a;
 }
 
+
+#===  FUNCTION  ================================================================
+#{{{1     NAME: scan_hdHomeRun_channels
+#      PURPOSE: Scan all the frequencies for available channels and store that 
+#               in the scanfilename.
+#   PARAMETERS: ????
+#      RETURNS: ????
+#  DESCRIPTION: ????
+#       THROWS: no exceptions
+#     COMMENTS: none
+#     SEE ALSO: n/a
+#===============================================================================
 sub scan_hdHomeRun_channels {
 
     system( "$hdHomeConfigCmd 10725EFE scan /tuner0  $scanfilename  ");
 }
 
+
+#===  FUNCTION  ================================================================
+#{{{1     NAME: getFreqChannelList
+#      PURPOSE: Read the scanfilename and create a hash of each virtual TV
+#               channel and thier Frequecy and Program.
+#   PARAMETERS: ????
+#      RETURNS: ????
+#  DESCRIPTION: ????
+#       THROWS: no exceptions
+#     COMMENTS: none
+#     SEE ALSO: n/a
+#===============================================================================
 sub getFreqChannelList {
     my %channelProgram;
 
