@@ -104,7 +104,7 @@ my $findTVChannel;
 my $DEBUGLEVEL=0;
 my $HOME="/home/pohwer";
 my $hdHomeConfigCmd = "/home/prohwer/bin.local/libhdhomerun/hdhomerun_config";
-my $filename = '/home/prohwer/Documents/perl/hdHomeScanToChannelProgram/scanOutput.txt';
+my $scanfilename = '/home/prohwer/Documents/perl/hdHomeScanToChannelProgram/scanOutput.txt';
 getopts( "hsD:f:", \%cmdLineOption );
     #	<+INPUTOPTIONS+>
 
@@ -137,14 +137,19 @@ if ( defined $cmdLineOption{h} ) {
 
 if ( defined $cmdLineOption{D} )  {
     $DEBUGLEVEL =   $cmdLineOption{D} ;
-	<+INPUTOPTIONS+>
+    #<+INPUTOPTIONS+>
 }
 
 if ( defined $cmdLineOption{f} )  {
    $findTVChannel =   $cmdLineOption{f} ;
-	<+INPUTOPTIONS+>
+   #<+INPUTOPTIONS+>
 }
 
+if ( defined $cmdLineOption{s} )  {
+    scan_hdHomeRun_channels();
+    exit(0);
+    
+}
 # ------------------------------------------------------------------------------
 #  MAIN part of program
 # ------------------------------------------------------------------------------
@@ -251,6 +256,10 @@ sub returnHash {
     return \%a;
 }
 
+sub scan_hdHomeRun_channels {
+
+    system( "$hdHomeConfigCmd 10725EFE scan /tuner0  $scanfilename  ");
+}
 
 sub getFreqChannelList {
     my %channelProgram;
@@ -259,7 +268,7 @@ sub getFreqChannelList {
 
 
     # Open the file for reading (mode '<')
-    open(my $fh, '<:encoding(UTF-8)', $filename) or die "Could not open file '$filename' $!";
+    open(my $fh, '<:encoding(UTF-8)', $scanfilename) or die "Could not open file '$scanfilename' $!";
 
     # Read each line from the filehandle ($fh) into the variable $line
     while (my $line = <$fh>) {
@@ -307,9 +316,9 @@ sub getFreqChannelList {
 #      RETURNS: A hash that hold the ID and IP address of the first found
 #               tuner.
 #               $hdHomeConfig = \{
-                    'hdHomeID' => '10725EFE',
-                    'hdHomeIP' => '192.168.0.6'
-                  };
+#                    'hdHomeID' => '10725EFE',
+#                    'hdHomeIP' => '192.168.0.6'
+#                  };
 #  DESCRIPTION: ????
 #       THROWS: no exceptions
 #     COMMENTS: none
