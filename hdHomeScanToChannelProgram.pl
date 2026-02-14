@@ -316,11 +316,18 @@ sub getFreqChannelList {
         # Process the line here (e.g., print it, split it, run regex)
         print "Processing line: $line\n" if ( $DEBUGLEVEL > 9);
         if ( $line =~ /SCANNING/ ) {
+            #  SCANNING: 177000000 (us-bcast:7)
+            #  Grabbing the freqeuncy (177000000) from line for future lines with PROGRAM
             my @fields = split(/ /, $line);
             print "Channel Freq field is: $fields[1]\n" if ( $DEBUGLEVEL > 8);
             $lastChannel=$fields[1];
         }
         if ( $line =~ /PROGRAM/ ) {
+            #  PROGRAM 3: 9.1 KNINHD
+            #  PROGRAM 4: 9.2 MeTV
+            #  PROGRAM 5: 9.3 Oxygen
+            #  PROGRAM 6: 9.4 MeTOONS
+            #  Grabbing the Program number and Name of the TV station
             my @fields = split(/[: ]/, $line);
             print "Program field is: $fields[1]\n" if ( $DEBUGLEVEL > 8);
             print "TVChannel field is: $fields[3]\n" if ( $DEBUGLEVEL > 8);
