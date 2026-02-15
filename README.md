@@ -1,23 +1,27 @@
-## hdHomeRun tuner tool
+# hdHomeRun tuner tool
 
-Perl frontend for the Silicon Dust hdHomeRun tuners
+Bash frontend for the Silicon Dust hdHomeRun tuners
+I've tested this with a HDHR5-4US
 
 
 
-The first thing that needs to be done is to scan for all the channels that your
-Tuner can find and create a file of that info.  This takes 5-10mins, so you only 
-need to do it once and anytime you think your available channels change. 
+
+1.  The first thing that needs to be done is to discover if any hdHomeRun tuners are available. 
+  `hd.sh -d`
+This will display the TUNER ID for any available tuners.   You'll need to edit the hd.sh file and
+change the 2nd line to match your tuner id.   Example  TUNER_ID="10725EFE"
+
+2. Use your tuner to scan for all the available channels that your Tuner can find.  This takes 5-10mins, so you only need to do it once and anytime you think your available channels change.
+
+   `hd.sh -S`
+
+3. List the available Virtuals channels. 
  
-    `hdHomeScanToChannelProgram.pl -s `
+    `hd.sh -l`
+4. Select a virtual channel and launch VLC to accept the stream from your tuner.
 
+   `hd.sh -l  <virtual channel>`
 
-To see the available channels that you can watch
- 
-    `hdHomeScanToChannelProgram.pl -l`
+   Example:   `hd.sh -v 7.2`
 
-
-
-To tune into a channel (6.1 in this example).
- 
-     `hdHomeScanToChannelProgram.pl -f 6.1`
 

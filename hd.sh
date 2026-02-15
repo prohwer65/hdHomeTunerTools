@@ -1,7 +1,13 @@
 #!/bin/bash
 TUNER_ID="10725EFE"
 CMD_HD="/home/prohwer/bin.local/libhdhomerun/hdhomerun_config"
+SCANLOGGFILE="${0%/*}""/scanOutput.txt"
 
+
+if [ ! -e "$CMD_HD" ]; then 
+    echo "ERROR:   Unable to find hdhomerun_config executable"
+    exit 1;
+fi
 
 USAGE="
 Silicon Dust HDHomeRun TV tuner script
@@ -14,7 +20,10 @@ Options:
   -s                     Show all the Tuners Status
   -t                     Show all the Tuners targets, if any.
   -v  [virtual channel]  Set an open tuner to Virtual Channel and Stream to VLC
+  -l                     List available virtual channels
+  -S                     Scan for all channels.  Note, this takes 5-10 mins.  $SCANLOGGFILE
 
+  -d                     Discover Tuner's ID
 
 
 "
@@ -62,11 +71,31 @@ clearTuner () {
     set +o xtrace
 }
 
+createScanOutputFile () {
+
+    local openTuner
+    openTuner=$(findOpenTuner)
+    "$CMD_HD" "$TUNER_ID"  scan /tuner"$openTuner" "$SCANLOGGFILE"
+}
+
+listVirtualChannels () { 
+
+    if [ ! -e "$SCANLOGGFILE" ]; then  
+        echo "Not Scan Log File found.  Creating it takes about 5-10 mins"
+        createScanOutputFile
+    fi
+
+    grep PROGRAM "$SCANLOGGFILE"  | awk 'BEGIN {print "VChannel" "\t"  "ChannelName"} { print $3 "\t\t" $4 } '
+
+    
+
+}
+
 
 discoverTuner () { 
     # device id of homerun
     local DEVICE
-    DEVICE=$(hdhomerun_config discover | awk '{print $3}')
+    DEVICE=$("$CMD_HD" discover | awk '{print $3}')
     echo "$DEVICE"
 }
 showTunerStatus ()  {
@@ -170,10 +199,17 @@ if [ "$1" == "-h" ]; then
     exit 0;
 fi
 
+if [ "$1" == "-d" ]; then
+    tuner_id=$(discoverTuner)
+    echo Change the scripts line 2 TUNER_ID="$tuner_id"
+    exit 0
+fi
+
 if [ "$1" == "-s" ]; then
     showTunerStatus
     exit 0
 fi
+
 if [ "$1" == "-t" ]; then
     showTunerTarget
     exit 0
@@ -181,6 +217,16 @@ fi
 
 if [ "$1" == "-c" ]; then
     clearTuner  "$2"
+    exit 0
+fi
+
+if [ "$1" == "-S" ]; then
+    createScanOutputFile
+    exit 0
+fi
+
+if [ "$1" == "-l" ]; then
+    listVirtualChannels
     exit 0
 fi
 
