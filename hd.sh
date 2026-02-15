@@ -17,42 +17,55 @@ Usage:    $0  vchannel
 Options:      
   -h                     This Help menu 
   -c  [tuner]            Clear a Tuner [0..3].
+  -d                     Discover Tuner's ID
+  -l                     List available virtual channels
   -s                     Show all the Tuners Status
+  -S                     Scan for all channels.  Note, this takes 5-10 mins.  $SCANLOGGFILE
   -t                     Show all the Tuners targets, if any.
   -v  [virtual channel]  Set an open tuner to Virtual Channel and Stream to VLC
-  -l                     List available virtual channels
-  -S                     Scan for all channels.  Note, this takes 5-10 mins.  $SCANLOGGFILE
-
-  -d                     Discover Tuner's ID
 
 
 "
 
 
 HDHomeRunHelp="HDHomeRun Help
+Parameters:
+hd.sh get help
+hd.sh get <item>
+hd.sh set <item> <value>
+hd.sh scan <tuner> [<filename>]
+hd.sh save <tuner> <filename>
+hd.sh upgrade <filename>
+
+
 Supported configuration options:
-/lineup/scan
-/sys/copyright
-/sys/debug
-/sys/features
-/sys/hwmodel
-/sys/model
-/sys/restart <resource>
-/sys/version
-/tuner<n>/channel <modulation>:<freq|ch>
-/tuner<n>/channelmap <channelmap>
-/tuner<n>/debug
-/tuner<n>/filter \"0x<nnnn>-0x<nnnn> [...]\"
-/tuner<n>/lockkey
-/tuner<n>/program <program number>
-/tuner<n>/status
-/tuner<n>/plpinfo
-/tuner<n>/streaminfo
-/tuner<n>/target <ip>:<port>
-/tuner<n>/vchannel <vchannel>
+/tuner<n>/channel <modulation>:<freq|ch>    Get/set modulation and frequency    
+/tuner<n>/channelmap <channel map>          Get/set channel to frequency map
+/tuner<n>/filter 0x<nnnn>-0x<nnnn> [...]    Get/set PID filter
+/tuner<n>/program <program number>          Get/set MPEG program filter
+/tuner<n>/target <ip>:<port>                Get/set target IP for tuner
+/tuner<n>/status                            Display status of tuner
+/tuner<n>/streaminfo                        Display stream info
+/tuner<n>/debug                             Display debug info for tuner
+/tuner<n>/lockkey                           Set/clear tuner lock
+/ir/target <ip>:<port>                      Get/set target IP for IR
+/lineup/location <countrycode>:<postcode>   Get/Set location for lineup
+/lineup/location disabled                   Disable lineup server connection
+/sys/model                                  Display model name
+/sys/features                               Display supported features
+/sys/version                                Display firmware version
+/sys/copyright                              Display firmware copyright
+/sys/debug                                  Display debug info     
+
+Supported configuration options:
+/lineup/scan                                Get
+/sys/hwmodel                                Get
+/sys/restart <resource>                     Get
+/tuner<n>/plpinfo                           Get
+/tuner<n>/vchannel <vchannel>               Get/set
 "
 
-
+# Quad had four tuners.   Adjust as neccasary.
 declare -a TUNERLIST=( {0..3} )
 
 ### Functions ############################################################
