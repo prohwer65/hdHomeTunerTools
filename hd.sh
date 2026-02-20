@@ -175,7 +175,7 @@ streamToVLC () {
     #/tuner<n>/vchannel <vchannel>
 
     # tell it to send the video stream our way
-    "$CMD_HD" "$TUNER_ID" set /tuner"$TUNER"/target rtp://"$myipAddress":"$RTP_PORT"
+    "$CMD_HD" "$TUNER_ID" set /tuner"$TUNER"/target "rtp://""$myipAddress"":""$RTP_PORT"
     # start VLC listening for stream
     vlc rtp://@:"$RTP_PORT"   > /dev/null 2>&1
 
@@ -195,7 +195,8 @@ getMyIPAddress () {
         MY_IP=$(ifconfig |  grep -w inet6 | awk '{print $2}')
     fi
 
-    echo "$MY_IP"
+    #`echo "$MY_IP"  | awk '{print $1}'
+    echo "$MY_IP"  | head -1
     #set +o xtrace
 }
 
