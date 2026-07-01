@@ -1,6 +1,6 @@
 #!/bin/bash
 TUNER_ID="10725EFE"
-CMD_HD="/home/prohwer/bin.local/libhdhomerun/hdhomerun_config"
+CMD_HD="$HOME/bin.local/libhdhomerun/hdhomerun_config"
 SCANLOGGFILE="${0%/*}""/scanOutput.txt"
 
 
@@ -16,14 +16,21 @@ Usage:    $0  vchannel
 
 Options:      
   -h                     This Help menu 
-  -c  [tuner]            Clear a Tuner [0..3].
+  -H                     Detailed Help menu 
+  -c  [tuner list]       Clear Tuner [0..3].
   -d                     Discover Tuner's ID
   -l                     List available virtual channels
   -s                     Show all the Tuners Status
   -S                     Scan for all channels.  Note, this takes 5-10 mins.  $SCANLOGGFILE
+                         Also creates a signalStrength.txt file to show signal strenght per locked freq.
   -t                     Show all the Tuners targets, if any.
   -v  [virtual channel]  Set an open tuner to Virtual Channel and Stream to VLC
 
+
+Examples:
+  $0  -c 1 3             Clear tuners 1 and 3
+  $0  -S                 Scan for available channels and create signal strength file
+  $0  -v 9.1             Launch VLC and stream virtual ch 9.1 to VLC.
 
 "
 
@@ -78,10 +85,10 @@ declare -a TUNERLIST=( {0..3} )
 clearTuner () {
     local tuner
 
-    set -o xtrace
+    #set -o xtrace
     tuner="$1"
     "$CMD_HD" "$TUNER_ID"  set /tuner"$tuner"/channel none
-    set +o xtrace
+    #set +o xtrace
 }
 
 createScanOutputFile () {
@@ -89,9 +96,18 @@ createScanOutputFile () {
     local openTuner
     openTuner=$(findOpenTuner)
     "$CMD_HD" "$TUNER_ID"  scan /tuner"$openTuner" "$SCANLOGGFILE"
+
+    # clear the tuner used during scan
+    clearTuner "$openTuner"
+
+    # print out the Freq, Signal Strength, and Signal Quality for all locked channels
+    DATE=$(date +"%Y-%m-%d_%H:%M:%S")
+    echo "$DATE"  | tee -a signalStrength.txt
+    perl -lne 'print "$p $_" if $_ =~ /8vsb/; $p = $_' "$SCANLOGGFILE" | sort | tee -a signalStrength.txt 
 }
 
 listVirtualChannels () { 
+
 
     if [ ! -e "$SCANLOGGFILE" ]; then  
         echo "Not Scan Log File found.  Creating it takes about 5-10 mins"
@@ -111,6 +127,8 @@ discoverTuner () {
     DEVICE=$("$CMD_HD" discover | awk '{print $3}')
     echo "$DEVICE"
 }
+
+
 showTunerStatus ()  {
     for tuner in "${TUNERLIST[@]}"; do 
         echo -n "Tuner""$tuner"": "
@@ -209,6 +227,11 @@ getMyIPAddress () {
 
 if [ "$1" == "-h" ]; then
     echo "$USAGE"
+    exit 0;
+fi
+
+
+if [ "$1" == "-H" ]; then
     echo "$HDHomeRunHelp"
     exit 0;
 fi
@@ -230,7 +253,11 @@ if [ "$1" == "-t" ]; then
 fi
 
 if [ "$1" == "-c" ]; then
-    clearTuner  "$2"
+    shift
+    for tuner in "$@"; do 
+        echo Clearing $tuner
+        clearTuner  "$tuner"
+    done
     exit 0
 fi
 
@@ -243,7 +270,6 @@ if [ "$1" == "-l" ]; then
     listVirtualChannels
     exit 0
 fi
-
 if [ "$1" == "-v" ]; then
     streamToVLC  "$2"
     exit 0
