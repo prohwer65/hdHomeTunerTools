@@ -196,7 +196,8 @@ streamToVLC () {
     "$CMD_HD" "$TUNER_ID" set /tuner"$TUNER"/target "rtp://""$myipAddress"":""$RTP_PORT"
     # start VLC listening for stream
     vlc rtp://@:"$RTP_PORT"   > /dev/null 2>&1
-
+    echo VLC retruned $?
+    echo .
     clearTuner "$TUNER"
     set +o xtrace
     
