@@ -179,7 +179,7 @@ streamToVLC () {
     # arbitrary port for VLC to listen on
     RTP_PORT=5000
 
-    set -o xtrace
+    #set -o xtrace
     # won't work if VLC is already running
     killall -9 VLC > /dev/null 2>&1
     sleep 0.5
@@ -199,7 +199,7 @@ streamToVLC () {
     echo VLC retruned $?
     echo .
     clearTuner "$TUNER"
-    set +o xtrace
+    #set +o xtrace
     
 }
 
@@ -281,9 +281,10 @@ openTuner=$(findOpenTuner)
 myipAddress=$(getMyIPAddress)
 echo My IP Address is "$myipAddress"
 
-echo "There is a open tuner at " "$openTuner"
+echo "There is an open tuner at " "$openTuner"
 
 
+#if is $1 not empty =, pass those arguments to $CMD_HD
 if [  -n "$1" ]; then
     echo Running: "$CMD_HD" "$TUNER_ID"  "$@"
     "$CMD_HD" "$TUNER_ID"  "$@"
